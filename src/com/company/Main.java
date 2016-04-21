@@ -15,12 +15,15 @@ public class Main {
     ///////////////////////////
     private static JButton selectASRIButton = new JButton("ASRI (36)");
     private static JButton selectSRQButton = new JButton("SRQ (63)");
+    private static JButton selectASRIButtonRU = new JButton("ASRI RU");
     //test Frame
     private static JFrame testScreen;
     private static JLabel questionText;
     private static JPanel questionPanel;
     private static JPanel selectionPanel;
     private static JRadioButton[] answers;
+
+    private enum Language{ EE, EN, RU};
 
     private static ButtonGroup likertScale;
     private static Question[] questions;
@@ -48,6 +51,8 @@ public class Main {
         selectionPanel.add(selectASRIButton);
         selectSRQButton.addActionListener(selectTestListener);
         selectionPanel.add(selectSRQButton);
+        selectASRIButtonRU.addActionListener(selectTestListener);
+        selectionPanel.add(selectASRIButtonRU);
 
         testScreen.add(selectionPanel, BorderLayout.EAST);
         testScreen.setVisible(true);
@@ -56,7 +61,7 @@ public class Main {
 
     }
 
-    public static void createContent() {
+    public static void createContent(int language) {
         questionPanel = new JPanel();
         answerPanel = new JPanel();
         answerPanel.setLayout(new GridLayout(1, 5));
@@ -68,12 +73,16 @@ public class Main {
 
         answers = new JRadioButton[5];
         likertScale = new ButtonGroup();
+        String[] languageEE = {"Pole tõene","Pole eriti tõene", "Ebakindel", "On pisut tõene", "On väga tõene"};
+        String[] languageEN = {"Not true", "Not very true", "Uncertain", "Somewhat true", "Very true"};
+        String[] languageRU = {"не правильно","не совсем правильно","неуверенный","почти правильно","правильно"};
+        String[][] likertValues = {languageEE, languageEN, languageRU};
 
-        answers[0] = new JRadioButton("Pole tõene");
-        answers[1] = new JRadioButton("Pole eriti tõene");
-        answers[2] = new JRadioButton("Ebakindel");
-        answers[3] = new JRadioButton("On pisut tõene ");
-        answers[4] = new JRadioButton("On väga tõene");
+        answers[0] = new JRadioButton(likertValues[language][0]);
+        answers[1] = new JRadioButton(likertValues[language][0]);
+        answers[2] = new JRadioButton(likertValues[language][0]);
+        answers[3] = new JRadioButton(likertValues[language][0]);
+        answers[4] = new JRadioButton(likertValues[language][0]);
 
         likertScale.add(answers[0]);
         likertScale.add(answers[1]);
@@ -183,7 +192,9 @@ public class Main {
                 selectionPanel.removeAll();
                 selectionPanel.repaint();
                 questionLinkedList = shuffleQuestions(questions);
-                createContent();
+                Language language = Language.EE;
+                int n = language.ordinal();
+                createContent(n);
             }
             if (e.getSource() == selectSRQButton) {
                 testLength = srqTestLength;
@@ -194,10 +205,24 @@ public class Main {
                 selectionPanel.removeAll();
                 selectionPanel.repaint();
                 questionLinkedList = shuffleQuestions(questions);
-                createContent();
+                Language language = Language.EE;
+                int n = language.ordinal();
+                createContent(n);
                 //displayHint();
             }
-
+            if(e.getSource() == selectASRIButtonRU){
+                testLength = asritTestLength;
+                questions = new Question[testLength];
+                for (int i = 0; i < testLength; i++) {
+                    questions[i] = new Question(QuestionData.ASRIitemRU[i], i, QuestionData.ASRIreversibles[i]);
+                }
+                selectionPanel.removeAll();
+                selectionPanel.repaint();
+                questionLinkedList = shuffleQuestions(questions);
+                Language language = Language.RU;
+                int n = language.ordinal();
+                createContent(n);
+            }
         }
     }
 
